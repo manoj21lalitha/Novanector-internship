@@ -1,0 +1,112 @@
+package java1;
+
+import java.swing.*;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class PercentageCalculatorGUI extends JFrame {
+    // GUI Components
+    private JPanel mainPanel;
+    private JTextField value1Field, value2Field, resultField;
+    private JComboBox<String> operationComboBox;
+    private JButton calculateButton;
+
+    
+    public PercentageCalculatorGUI() {
+        setTitle("Percentage Calculator");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(400, 300);
+        
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new GridLayout(4, 2, 10, 10));
+        
+        // Components initialization
+        JLabel value1Label = new JLabel("Value 1:");
+        value1Field = new JTextField();
+        
+        JLabel value2Label = new JLabel("Value 2:");
+        value2Field = new JTextField();
+        
+        JLabel operationLabel = new JLabel("Select operation:");
+        String[] operations = {"Percentage", "Percentage Increase", "Percentage Decrease", "Find Whole Given Part and Percentage"};
+        operationComboBox = new JComboBox<>(operations);
+        
+        JLabel resultLabel = new JLabel("Result:");
+        resultField = new JTextField();
+        resultField.setEditable(false); // Result field should not be editable
+        
+        calculateButton = new JButton("Calculate");
+        calculateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calculate();
+            }
+        });
+        
+        // Adding components to panel
+        mainPanel.add(value1Label);
+        mainPanel.add(value1Field);
+        mainPanel.add(value2Label);
+        mainPanel.add(value2Field);
+        mainPanel.add(operationLabel);
+        mainPanel.add(operationComboBox);
+        mainPanel.add(resultLabel);
+        mainPanel.add(resultField);
+        
+        // Adding panel to frame
+        add(mainPanel, BorderLayout.CENTER);
+        add(calculateButton, BorderLayout.SOUTH);
+        
+        setVisible(true);
+    }
+    
+    
+    private void calculate() {
+        try {
+            double value1 = Double.parseDouble(value1Field.getText());
+            double value2 = Double.parseDouble(value2Field.getText());
+            String operation = (String) operationComboBox.getSelectedItem();
+            
+            double result = 0;
+            
+            switch (operation) {
+                case "Percentage":
+                    result = (value1 / 100) * value2;
+                    break;
+                case "Percentage Increase":
+                    result = value1 + (value1 / 100 * value2);
+                    break;
+                case "Percentage Decrease":
+                    result = value1 - (value1 / 100 * value2);
+                    break;
+                case "Find Whole Given Part and Percentage":
+                    result = value2 / (value1 / 100);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid operation selected");
+            }
+            
+            resultField.setText(String.format("%.2f", result)); // Display result
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Invalid input! Please enter valid numbers.", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new PercentageCalculatorGUI());
+    }
+}
